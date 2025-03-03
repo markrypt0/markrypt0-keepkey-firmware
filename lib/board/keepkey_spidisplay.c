@@ -1,7 +1,7 @@
 /*
  * This file is part of the KeepKey project.
  *
- * Copyright (C) 2015 KeepKey LLC
+ * Copyright (C) 2025 markrypt0
  *
  * This library is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -20,19 +20,71 @@
 #ifndef EMULATOR
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/spi.h>
 #endif
 
 #include "keepkey/board/keepkey_display.h"
 #include "keepkey/board/pin.h"
 #include "keepkey/board/timer.h"
 #include "keepkey/board/supervise.h"
+#include "keepkey/board/keepkey_leds.h"
 
 #pragma GCC push_options
 #pragma GCC optimize("-O3")
 
+
 static uint8_t canvas_buffer[KEEPKEY_DISPLAY_HEIGHT * KEEPKEY_DISPLAY_WIDTH];
 static Canvas canvas;
 bool constant_power = false;
+
+static void spi_setup(void) {
+  #ifndef EMULATOR
+
+  gpio_set_output_options(GPIOA, GPIO_OTYPE_PP, GPIO_OSPEED_100MHZ,
+    GPIO4 | GPIO5 | GPIO7);
+
+  // enable SPI 1 for OLED display
+  gpio_mode_setup(GPIOA, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO4 | GPIO5 | GPIO7);
+
+  gpio_set_af(GPIOA, GPIO_AF5, GPIO4 | GPIO5 | GPIO7);
+
+
+  // enable SPI clock
+  rcc_periph_clock_enable(RCC_SPI1);
+   
+/*
+int spi_init_master	(	
+uint32_t 	spi,
+uint32_t 	br,
+uint32_t 	cpol,
+uint32_t 	cpha,
+uint32_t 	dff,
+uint32_t 	lsbfirst 
+)		
+
+Parameters
+[in]	spi	Unsigned int32. SPI peripheral identifier SPI Register base address.
+[in]	br	Unsigned int32. Baudrate SPI peripheral baud rates.
+[in]	cpol	Unsigned int32. Clock polarity SPI clock polarity.
+[in]	cpha	Unsigned int32. Clock Phase SPI clock phase.
+[in]	dff	Unsigned int32. Data frame format 8/16 bits SPI data frame format.
+[in]	lsbfirst	Unsigned int32. Frame format lsb/msb first SPI lsb/msb first.
+
+*/
+  spi_init_master(
+    SPI1, 
+    SPI_CR1_BAUDRATE_FPCLK_DIV_16, 
+    SPI_CR1_CPOL_CLK_TO_1_WHEN_IDLE,
+    SPI_CR1_CPHA_CLK_TRANSITION_2, 
+    SPI_CR1_DFF_8BIT, 
+    SPI_CR1_MSBFIRST);
+
+  spi_enable_ss_output(SPI1);
+  spi_enable(SPI1);
+
+#endif  // EMULATOR
+}
+
 
 /*
  * display_write_reg() - Write data to display register
@@ -45,52 +97,17 @@ bool constant_power = false;
 static void display_write_reg(uint8_t reg) {
 #ifndef EMULATOR
 
-  svc_disable_interrupts();
-
-  /* Set up the data */
-  GPIO_BSRR(GPIOA) = 0x000000FF & (uint32_t)reg;
-
-  /* Set nOLED_SEL low, nMEM_OE high, and nMEM_WE high. */
+  // /* Set nOLED_SEL low */
   CLEAR_PIN(nSEL_PIN);
-  SET_PIN(nOE_PIN);
-  SET_PIN(nWE_PIN);
-
-  __asm__("nop");
-  __asm__("nop");
 
   /* Set nDC low */
   CLEAR_PIN(nDC_PIN);
 
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-
-  /* Set nMEM_WE low */
-  CLEAR_PIN(nWE_PIN);
-
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-
-  /* Set nMEM_WE high */
-  SET_PIN(nWE_PIN);
-
-  __asm__("nop");
-  __asm__("nop");
+  spi_send(SPI1, (uint16_t)reg);
+  delay_us(10);
 
   /* Set nOLED_SEL high */
   SET_PIN(nSEL_PIN);
-  GPIO_BSRR(GPIOA) = 0x00FF0000;
-
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-
-  svc_enable_interrupts();
 
 #endif
 }
@@ -111,7 +128,7 @@ static void display_reset(void) {
 
   SET_PIN(nRESET_PIN);
 
-  delay_ms(50);
+  delay_ms(10);
 #endif
 }
 
@@ -123,16 +140,11 @@ static void display_reset(void) {
  */
 static void display_reset_io(void) {
 #ifndef EMULATOR
-  svc_disable_interrupts();
+
   SET_PIN(nRESET_PIN);
-  CLEAR_PIN(BACKLIGHT_PWR_PIN);
-  SET_PIN(nWE_PIN);
-  SET_PIN(nOE_PIN);
   SET_PIN(nDC_PIN);
   SET_PIN(nSEL_PIN);
 
-  GPIO_BSRR(GPIOA) = 0x00FF0000;
-  svc_enable_interrupts();
 #endif
 }
 
@@ -144,25 +156,17 @@ static void display_reset_io(void) {
  * OUTPUT
  *     none
  */
-static void display_configure_io(void) {
+// static void display_configure_io(void) {
+void display_configure_io(void) {
 #ifndef EMULATOR
-  /* Set up port A */
-  gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
-                  GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 | GPIO6 |
-                      GPIO7 | GPIO8 | GPIO9 | GPIO10);
+  spi_setup();
+  /* Set up port C  OLED_RST=PC3, DC=PC2, CS=C1*/
+  gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
+    GPIO1 | GPIO2 | GPIO3 | GPIO5);
 
-  gpio_set_output_options(GPIOA, GPIO_OTYPE_PP, GPIO_OSPEED_100MHZ,
-                          GPIO0 | GPIO1 | GPIO2 | GPIO3 | GPIO4 | GPIO5 |
-                              GPIO6 | GPIO7 | GPIO8 | GPIO9 | GPIO10);
+  gpio_set_output_options(GPIOC, GPIO_OTYPE_PP, GPIO_OSPEED_100MHZ,
+    GPIO1 | GPIO2 | GPIO3 | GPIO5);
 
-  /* Set up port B */
-  gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
-                  GPIO0 | GPIO1 | GPIO5);
-
-  gpio_set_output_options(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_100MHZ,
-                          GPIO0 | GPIO1 | GPIO5);
-
-  /* Set to defaults */
   display_reset_io();
 #endif
 }
@@ -191,52 +195,21 @@ static void display_prepare_gram_write(void) {
  */
 static void display_write_ram(uint8_t val) {
 #ifndef EMULATOR
-  svc_disable_interrupts();
+  // svc_disable_interrupts();
 
-  /* Set up the data */
-  GPIO_BSRR(GPIOA) = 0x000000FF & (uint32_t)val;
-
-  /* Set nOLED_SEL low, nMEM_OE high, and nMEM_WE high. */
+  // /* Set nOLED_SEL low */
   CLEAR_PIN(nSEL_PIN);
-  SET_PIN(nOE_PIN);
-  SET_PIN(nWE_PIN);
-
-  __asm__("nop");
-  __asm__("nop");
 
   /* Set nDC high */
   SET_PIN(nDC_PIN);
 
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-
-  /* Set nMEM_WE low */
-  CLEAR_PIN(nWE_PIN);
-
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-
-  /* Set nMEM_WE high */
-  SET_PIN(nWE_PIN);
-
-  __asm__("nop");
-  __asm__("nop");
+  spi_send(SPI1, (uint16_t)val);
+  delay_us(10);
 
   /* Set nOLED_SEL high */
   SET_PIN(nSEL_PIN);
-  GPIO_BSRR(GPIOA) = 0x00FF0000;
 
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-  __asm__("nop");
-
-  svc_enable_interrupts();
+  // svc_enable_interrupts();
 
 #endif
 }
@@ -358,11 +331,8 @@ void display_constant_power(bool enabled)
 void display_hw_init(void) {
 #ifndef EMULATOR
   display_configure_io();
-
-  CLEAR_PIN(BACKLIGHT_PWR_PIN);
-
   display_reset();
-
+  
   display_write_reg((uint8_t)0xFD);
   display_write_ram((uint8_t)0x12);
 
@@ -388,6 +358,7 @@ void display_hw_init(void) {
   int width = (256 / 4);
   uint8_t col_start = START_COL;
   uint8_t col_end = col_start + width - 1;
+  led_func(TGL_GREEN_LED);
 
   display_write_reg((uint8_t)0x75);
   display_write_ram(row_start);
@@ -459,7 +430,7 @@ void display_hw_init(void) {
   }
 
   /* Turn on 12V */
-  SET_PIN(BACKLIGHT_PWR_PIN);
+  // SET_PIN(BACKLIGHT_PWR_PIN);
 
   delay_ms(100);
 

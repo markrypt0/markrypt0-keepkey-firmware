@@ -1,0 +1,1 @@
+docker build . -f dev.Dockerfile -t kkfirmware:v16_dev 

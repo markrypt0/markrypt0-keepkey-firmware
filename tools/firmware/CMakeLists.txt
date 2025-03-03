@@ -24,17 +24,14 @@ if(NOT ${KK_EMULATOR})
   set(CMAKE_EXE_LINKER_FLAGS
       "${CMAKE_EXE_LINKER_FLAGS} -T${linker_script} -L${CMAKE_BINARY_DIR}/lib")
 
-  set(LINK_FLAGS
-      kkfirmware
-      kkboard
-      kktransport
-      trezorcrypto
-      -lopencm3_stm32f2
-      -lc
-      -lm)
+  if("${DEVDEBUG}" STREQUAL "true")
+    set(targtype -lopencm3_stm32f4)
+  else()
+    set(targtype -lopencm3_stm32f2)
+  endif()
 
   add_executable(${TARGESTR} ${sources})
-
+  
   set(libraries
     kkfirmware
     kkfirmware.keepkey
@@ -56,7 +53,7 @@ endif()
 
   target_link_libraries(${TARGESTR}
       ${libraries}
-      -lopencm3_stm32f2
+      ${targtype}
       -lc
       -lm)
 

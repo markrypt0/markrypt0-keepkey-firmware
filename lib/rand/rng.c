@@ -24,7 +24,11 @@
 #ifndef EMULATOR
 #include <libopencm3/cm3/common.h>
 #include <libopencm3/stm32/memorymap.h>
+#ifdef DEV_DEBUG
+#include <libopencm3/stm32/f4/rng.h>
+#else
 #include <libopencm3/stm32/f2/rng.h>
+#endif
 #endif
 
 void reset_rng(void) {

@@ -16,13 +16,15 @@ set(CMAKE_CXX_COMPILER arm-none-eabi-g++ CACHE FILEPATH "")
 set(CMAKE_C_COMPILER_WORKS True CACHE BOOL "")
 set(CMAKE_CXX_COMPILER_WORKS True CACHE BOOL "")
 
+set(floatarch -mfloat-abi=soft)
+set(fpu -mfpu=fpv4-sp-d16)
+set(cpu -mcpu=cortex-m4)
 
-set(floatarch -msoft-float)
-set(cpu -mcpu=cortex-m3)
 
 set(ARCH_FLAGS
     "-mthumb \
     ${cpu} \
+    ${fpu} \
     ${floatarch} \
     -ffunction-sections \
     -fdata-sections \
