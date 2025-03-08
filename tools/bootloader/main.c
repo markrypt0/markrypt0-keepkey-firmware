@@ -338,7 +338,7 @@ int main(void) {
 
   SSD1351_Init();
   SSD1351_FillScreen(SSD1351_BLACK);
-  SSD1351_WriteString(0, 0, "booting...", Font_7x10, SSD1351_WHITE, SSD1351_BLACK);
+  SSD1351_WriteString(0, 0, "bootloader", Font_7x10, SSD1351_BLUE, SSD1351_BLACK);
 
 
 #if !defined(DEBUG_ON) && (MEMORY_PROTECT == 0)
