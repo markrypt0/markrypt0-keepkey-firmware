@@ -1,5 +1,4 @@
 if(NOT ${KK_EMULATOR})
-
   set(sources
       main.c
       startup.s)
@@ -11,8 +10,14 @@ if(NOT ${KK_EMULATOR})
 
   set(linker_script ${CMAKE_CURRENT_SOURCE_DIR}/bootstrap.ld)
 
+  if(CMAKE_C_COMPILER_VERSION VERSION_LESS "12.2.1")
+    set(warnopt "")
+  else()
+    set(warnopt "-Wl,--no-warn-rwx-segments")
+  endif()
+
   set(CMAKE_EXE_LINKER_FLAGS
-      "${CMAKE_EXE_LINKER_FLAGS} -T${linker_script} -L${CMAKE_BINARY_DIR}/lib")
+      "${CMAKE_EXE_LINKER_FLAGS} ${warnopt} -T${linker_script} -L${CMAKE_BINARY_DIR}/lib")
 
   if("${DEVDEBUG}" STREQUAL "true")
     set(targtype -lopencm3_stm32f4)
