@@ -31,6 +31,8 @@
 
 #define RIPPLE_FLAG_FULLY_CANONICAL 0x80000000
 
+#define MAX_RIPPLE_ADDR_SIZE 36
+
 typedef enum {
   RFT_INT16 = 1,
   RFT_INT32 = 2,
@@ -57,7 +59,7 @@ extern const RippleFieldMapping RFM_lastLedgerSequence;
 extern const RippleFieldMapping RFM_destinationTag;
 
 bool ripple_getAddress(const uint8_t public_key[33],
-                       char address[MAX_ADDR_SIZE]);
+                       char address[MAX_RIPPLE_ADDR_SIZE]);
 
 void ripple_formatAmount(char *buf, size_t len, uint64_t amount);
 

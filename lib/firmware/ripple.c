@@ -39,7 +39,7 @@ const RippleFieldMapping RFM_lastLedgerSequence = {.type = RFT_INT32,
 const RippleFieldMapping RFM_destinationTag = {.type = RFT_INT32, .key = 14};
 
 bool ripple_getAddress(const uint8_t public_key[33],
-                       char address[MAX_ADDR_SIZE]) {
+                       char address[MAX_RIPPLE_ADDR_SIZE]) {
   uint8_t buff[64];
   memset(buff, 0, sizeof(buff));
 
@@ -48,7 +48,7 @@ bool ripple_getAddress(const uint8_t public_key[33],
   hasher_Update(&hasher, public_key, 33);
   hasher_Final(&hasher, buff + 1);
 
-  if (!ripple_encode_check(buff, 21, HASHER_SHA2D, address, MAX_ADDR_SIZE)) {
+  if (!ripple_encode_check(buff, 21, HASHER_SHA2D, address, MAX_RIPPLE_ADDR_SIZE)) {
     assert(false && "can't encode address");
     return false;
   }
