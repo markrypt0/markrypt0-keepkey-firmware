@@ -59,10 +59,10 @@ add_library(kkfirmware ${sources})
 
 if("${COIN_SUPPORT}" STREQUAL "BTC")
   # for bitcoin-only, do not build eth token table or uniswap tokens
-  add_dependencies(kkfirmware kktransport.pb trezorcrypto qrcodegenerator)
+  add_dependencies(kkfirmware kktransport.pb hwcrypto qrcodegenerator)
 
 else()
-  add_dependencies(kkfirmware kktransport.pb trezorcrypto qrcodegenerator ethereum_tokens.def)
+  add_dependencies(kkfirmware kktransport.pb hwcrypto qrcodegenerator ethereum_tokens.def)
   set(ETHEREUM_TOKENS ${CMAKE_BINARY_DIR}/include/keepkey/firmware/ethereum_tokens)
   set(UNISWAP_TOKENS ${CMAKE_BINARY_DIR}/include/keepkey/firmware/uniswap_tokens)
 

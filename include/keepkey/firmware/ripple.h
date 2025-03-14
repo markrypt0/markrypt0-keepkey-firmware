@@ -20,7 +20,7 @@
 #ifndef KEEPKEY_FIRMWARE_RIPPLE_H
 #define KEEPKEY_FIRMWARE_RIPPLE_H
 
-#include "trezor/crypto/bip32.h"
+#include "hwcrypto/crypto/bip32.h"
 
 #include "messages-ripple.pb.h"
 

@@ -55,8 +55,8 @@
 #include "keepkey/rand/rng.h"
 #include "keepkey/variant/keepkey.h"
 #include "keepkey/variant/poweredBy.h"
-#include "trezor/crypto/memzero.h"
-#include "trezor/crypto/rand.h"
+#include "hwcrypto/crypto/memzero.h"
+#include "hwcrypto/crypto/rand.h"
 
 #ifdef DEV_DEBUG
 #include "keepkey/board/pin.h"

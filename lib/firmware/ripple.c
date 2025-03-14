@@ -20,8 +20,8 @@
 #include "keepkey/firmware/ripple.h"
 
 #include "keepkey/firmware/ripple_base58.h"
-#include "trezor/crypto/base58.h"
-#include "trezor/crypto/secp256k1.h"
+#include "hwcrypto/crypto/base58.h"
+#include "hwcrypto/crypto/secp256k1.h"
 
 #include <assert.h>
 

@@ -30,13 +30,13 @@
 #include "keepkey/firmware/thorchain.h"
 #include "keepkey/firmware/txin_check.h"
 #include "keepkey/transport/interface.h"
-#include "trezor/crypto/address.h"
-#include "trezor/crypto/base58.h"
-#include "trezor/crypto/cash_addr.h"
-#include "trezor/crypto/ecdsa.h"
-#include "trezor/crypto/memzero.h"
-#include "trezor/crypto/ripemd160.h"
-#include "trezor/crypto/segwit_addr.h"
+#include "hwcrypto/crypto/address.h"
+#include "hwcrypto/crypto/base58.h"
+#include "hwcrypto/crypto/cash_addr.h"
+#include "hwcrypto/crypto/ecdsa.h"
+#include "hwcrypto/crypto/memzero.h"
+#include "hwcrypto/crypto/ripemd160.h"
+#include "hwcrypto/crypto/segwit_addr.h"
 
 #include <string.h>
 

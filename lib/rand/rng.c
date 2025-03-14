@@ -19,7 +19,7 @@
 
 #include "keepkey/rand/rng.h"
 
-#include "trezor/crypto/rand.h"
+#include "hwcrypto/crypto/rand.h"
 
 #ifndef EMULATOR
 #include <libopencm3/cm3/common.h>

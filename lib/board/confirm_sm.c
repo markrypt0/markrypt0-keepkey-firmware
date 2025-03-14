@@ -25,7 +25,7 @@
 #include "keepkey/board/confirm_sm.h"
 #include "keepkey/board/usb.h"
 #include "keepkey/board/supervise.h"
-#include "trezor/crypto/memzero.h"
+#include "hwcrypto/crypto/memzero.h"
 
 #ifndef EMULATOR
 #include <libopencm3/cm3/cortex.h>

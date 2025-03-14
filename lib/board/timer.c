@@ -35,7 +35,7 @@
 #include "keepkey/board/keepkey_leds.h"
 #include "keepkey/board/timer.h"
 #include "keepkey/board/supervise.h"
-#include "trezor/crypto/rand.h"
+#include "hwcrypto/crypto/rand.h"
 
 #ifdef DEV_DEBUG
 #include "keepkey/board/pin.h"
