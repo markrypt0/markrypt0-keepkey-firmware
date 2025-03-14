@@ -22,13 +22,23 @@ RUN apk add py3-ecdsa py3-requests py3-flask py3-pytest py3-semver
 RUN apk add --update py3-protobuf
 RUN apk add --update py3-build
 
-# Install gcc-arm-none-eabi
+# Install gcc-arm-none-eabi version 12.2.1 for raspi running bookworm
 WORKDIR /root
 RUN wget https://developer.arm.com/-/media/Files/downloads/gnu/12.2.rel1/binrel/arm-gnu-toolchain-12.2.rel1-aarch64-arm-none-eabi.tar.xz
 RUN tar -xvf arm-gnu-toolchain-12.2.rel1-aarch64-arm-none-eabi.tar.xz
 RUN cp -r arm-gnu-toolchain-12.2.rel1-aarch64-arm-none-eabi/* /usr/local
 RUN rm  arm-gnu-toolchain-12.2.rel1-aarch64-arm-none-eabi.tar.xz
 RUN rm -rf arm-gnu-toolchain-12.2.rel1-aarch64-arm-none-eabi
+
+# This is a kludge that patches the system library so that useless system call warnings 
+# aren't generated, e.g.,
+#              warning: _close is not implemented and will always fail
+# during link. The warnings are harmless but there is no way to turn them off with a flag.
+# Note that the library is particular to the hardware and no floating point instructions.
+#
+# see https://stackoverflow.com/questions/73742774/gcc-arm-none-eabi-11-3-is-not-implemented-and-will-always-fail
+WORKDIR /usr/local/arm-none-eabi/lib/thumb/v7e-m/nofp
+RUN arm-none-eabi-objcopy -w -R .gnu.warning.* libnosys.a
 
 # Install protobuf-compiler
 WORKDIR /root
@@ -61,13 +71,13 @@ RUN make
 RUN rm -rf /root/protobuf-python
 
 # Setup environment
-ENV PATH /root/nanopb/generator:$PATH
+ENV PATH=/root/nanopb/generator:$PATH
 
 # Build libopencm3
 WORKDIR /root
 RUN git clone --branch devdebug-1 https://github.com/markrypt0/libopencm3.git
 WORKDIR /root/libopencm3
-ENV FP_FLAGS "-mfloat-abi=soft"
+ENV FP_FLAGS="-mfloat-abi=soft"
 RUN make TARGETS='stm32/f2 stm32/f4'
 
 RUN apk add --update --no-cache \
