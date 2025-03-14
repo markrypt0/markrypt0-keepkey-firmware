@@ -2,9 +2,6 @@
 path = deps/device-protocol
 url = https://github.com/keepkey/device-protocol.git
 branch = master
-[submodule "deps/trezor-firmware"]
-path = deps/crypto/trezor-firmware
-url = https://github.com/keepkey/trezor-firmware.git
 [submodule "googletest"]
 path = deps/googletest
 url = https://github.com/google/googletest.git
