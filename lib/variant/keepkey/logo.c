@@ -20,8 +20,9 @@
 #include "keepkey/board/resources.h"
 
 #ifdef DEV_DEBUG
-#define ATIME 15  
-#define ATIME2 3   // the spi display and clock diffs require a shorter animation time on the dev board
+// the spi display and clock diffs require a shorter animation frame time on the dev board
+#define ATIME 21  // this is the screensaver move time
+#define ATIME2 3  // this is the fade-in frame time
 #else
 #define ATIME 150
 #define ATIME2 25

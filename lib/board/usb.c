@@ -21,8 +21,6 @@
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/hid.h>
 #include <libopencm3/stm32/gpio.h>
-#include <libopencm3/usb/hid.h>
-#include <libopencm3/usb/usbd.h>
 #include <libopencm3/stm32/desig.h>
 #include <libopencm3/stm32/rcc.h>
 #include "keepkey/board/keepkey_board.h"
