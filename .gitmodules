@@ -18,3 +18,6 @@ branch = pi-dev
 [submodule "deps/crypto/hw-crypto"]
 	path = deps/crypto/hw-crypto
 	url = https://github.com/markrypt0/hw-crypto.git
+[submodule "deps/python-keepkey"]
+	path = deps/python-keepkey
+	url = https://github.com/keepkey/python-keepkey.git
