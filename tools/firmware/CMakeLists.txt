@@ -44,12 +44,25 @@ if(NOT ${KK_EMULATOR})
     SecAESSTM32
     kkrand)
 
-if("${COIN_SUPPORT}" STREQUAL "BTC")
-else()
-  list(APPEND libraries
-    kkvariant.salt
-  )
-endif()
+  if("${COIN_SUPPORT}" STREQUAL "BTC")
+  else()
+    list(APPEND libraries
+      kkvariant.salt
+    )
+  endif()
+
+# these nanopb files need to be removed and since this is the last binary built, they
+# are set to be removed post-build. See lib/CMakeLists.txt for further explanation.
+  set(nanopb_rmsources
+    ${CMAKE_SOURCE_DIR}/lib/transport/pb_common.c
+    ${CMAKE_SOURCE_DIR}/lib/transport/pb_decode.c
+    ${CMAKE_SOURCE_DIR}/lib/transport/pb_encode.c)
+
+  set(nanopb_rminc
+    ${CMAKE_SOURCE_DIR}/include/pb_common.h
+    ${CMAKE_SOURCE_DIR}/include/pb_decode.h
+    ${CMAKE_SOURCE_DIR}/include/pb_encode.h
+    ${CMAKE_SOURCE_DIR}/include/pb.h)
 
   target_link_libraries(${TARGESTR}
       ${libraries}
@@ -61,6 +74,11 @@ endif()
     POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} ARGS -O binary
       ${CMAKE_BINARY_DIR}/bin/${TARGESTR}
-      ${CMAKE_BINARY_DIR}/bin/${TARGBSTR})
+      ${CMAKE_BINARY_DIR}/bin/${TARGBSTR}
+    COMMAND
+      ${CMAKE_COMMAND} -E rm ${nanopb_rmsources}
+    COMMAND
+      ${CMAKE_COMMAND} -E rm ${nanopb_rminc}
+    COMMAND_EXPAND_LISTS)
 
-endif()
+endif() # KK_EMULATOR
