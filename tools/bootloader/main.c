@@ -336,10 +336,11 @@ int main(void) {
 
   layout_simple_message("booting...");
 
+#ifdef TWO_DISP
   SSD1351_Init();
   SSD1351_FillScreen(SSD1351_BLACK);
   SSD1351_WriteString(0, 0, "bootloader", Font_7x10, SSD1351_BLUE, SSD1351_BLACK);
-
+#endif
 
 #if !defined(DEBUG_ON) && (MEMORY_PROTECT == 0)
 #error "To compile release version, please set MEMORY_PROTECT flag"

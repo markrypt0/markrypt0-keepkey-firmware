@@ -19,7 +19,7 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_SOURCE_DIR}/lib/firmware
     ${CMAKE_BINARY_DIR}/include
-    ${CMAKE_SOURCE_DIR}/deps/crypto/trezor-crypto)
+    ${CMAKE_SOURCE_DIR}/deps/crypto/hw-crypto)
 
 add_executable(firmware-unit ${sources})
 target_link_libraries(firmware-unit
@@ -32,7 +32,7 @@ target_link_libraries(firmware-unit
     kkvariant.salt
     kkboard
     kkemulator
-    trezorcrypto
+    hwcrypto
     qrcodegenerator
     SecAESSTM32
     kkrand

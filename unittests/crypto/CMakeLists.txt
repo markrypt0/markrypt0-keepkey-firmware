@@ -5,7 +5,7 @@ set(sources
 include_directories(
     ${CMAKE_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR}/include
-    ${CMAKE_SOURCE_DIR}/deps/crypto/trezor-crypto)
+    ${CMAKE_SOURCE_DIR}/deps/crypto/hw-crypto)
 
 add_executable(crypto-unit ${sources})
 
@@ -20,7 +20,7 @@ set(libraries
   kkemulator
   qrcodegenerator
   kkrand
-  trezorcrypto
+  hwcrypto
   kktransport)
 
 if("${COIN_SUPPORT}" STREQUAL "BTC")

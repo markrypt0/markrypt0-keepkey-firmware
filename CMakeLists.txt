@@ -58,7 +58,7 @@ find_program(NANOPB_GENERATOR nanopb_generator.py)
 if(${KK_EMULATOR} AND NOT NANOPB_GENERATOR)
   message(
     FATAL_ERROR
-      "Must install nanopb 0.3.9.4, and put nanopb-nanopb-0.3.9.4/generator on your PATH"
+      "Must install nanopb v1.0.0, and put nanopb-nanopb-v1.0.0/generator on your PATH"
   )
 endif()
 

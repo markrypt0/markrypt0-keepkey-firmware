@@ -41,8 +41,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#ifndef EMULATOR
 /* Stack smashing protector (SSP) canary value storage */
 uintptr_t __stack_chk_guard;
+#endif
 
 #ifdef EMULATOR
 /**
