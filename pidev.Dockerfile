@@ -43,6 +43,8 @@ RUN rm -rf arm-gnu-toolchain-12.2.rel1-aarch64-arm-none-eabi
 # see https://stackoverflow.com/questions/73742774/gcc-arm-none-eabi-11-3-is-not-implemented-and-will-always-fail
 WORKDIR /usr/local/arm-none-eabi/lib/thumb/v7e-m/nofp
 RUN arm-none-eabi-objcopy -w -R .gnu.warning.* libnosys.a
+WORKDIR /usr/local/arm-none-eabi/lib/thumb/v7-m/nofp
+RUN arm-none-eabi-objcopy -w -R .gnu.warning.* libnosys.a
 
 # Install protobuf-compiler
 WORKDIR /root
