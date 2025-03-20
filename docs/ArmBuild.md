@@ -29,11 +29,3 @@ Build firmware
 ```sh
 $ ./scripts/build/docker/device/armdebug.sh
 ```
-
-Running the tests
------------------
-
-```sh
-$ cd build
-$ make all test
-```
