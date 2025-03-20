@@ -37,3 +37,24 @@ target_link_libraries(firmware-unit
     SecAESSTM32
     kkrand
     kktransport)
+
+# these nanopb files need to be removed and since this is the last binary built, they
+# are set to be removed post-build. See lib/CMakeLists.txt for further explanation.
+set(nanopb_rmsources
+  ${CMAKE_SOURCE_DIR}/lib/transport/pb_common.c
+  ${CMAKE_SOURCE_DIR}/lib/transport/pb_decode.c
+  ${CMAKE_SOURCE_DIR}/lib/transport/pb_encode.c)
+
+set(nanopb_rminc
+  ${CMAKE_SOURCE_DIR}/include/pb_common.h
+  ${CMAKE_SOURCE_DIR}/include/pb_decode.h
+  ${CMAKE_SOURCE_DIR}/include/pb_encode.h
+  ${CMAKE_SOURCE_DIR}/include/pb.h)
+
+  add_custom_command(TARGET firmware-unit
+  POST_BUILD
+  COMMAND
+    ${CMAKE_COMMAND} -E rm ${nanopb_rmsources}
+  COMMAND
+    ${CMAKE_COMMAND} -E rm ${nanopb_rminc}
+  COMMAND_EXPAND_LISTS)

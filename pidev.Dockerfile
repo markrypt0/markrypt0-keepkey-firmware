@@ -22,6 +22,10 @@ RUN apk add py3-ecdsa py3-requests py3-flask py3-pytest py3-semver
 RUN apk add --update py3-protobuf
 RUN apk add --update py3-build
 
+# Apparently py3-mnemonic is not in the latest version of Alpine packages so get it another way
+RUN apk add py3-pip
+RUN pip install --break-system-packages --root-user-action ignore mnemonic
+
 # Install gcc-arm-none-eabi version 12.2.1 for raspi running bookworm
 WORKDIR /root
 RUN wget https://developer.arm.com/-/media/Files/downloads/gnu/12.2.rel1/binrel/arm-gnu-toolchain-12.2.rel1-aarch64-arm-none-eabi.tar.xz
