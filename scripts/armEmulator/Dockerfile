@@ -1,4 +1,4 @@
-FROM kkfirmware:v16_pidev
+FROM kkfirmware:v16
 
 WORKDIR /kkemu
 COPY ./ /kkemu

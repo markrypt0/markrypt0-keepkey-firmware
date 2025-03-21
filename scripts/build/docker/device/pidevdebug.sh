@@ -3,7 +3,7 @@
 KEEPKEY_FIRMWARE="$(dirname "$(dirname "$(dirname "$(dirname "$( cd "$(dirname "$0")" ; pwd -P )")")")")"
 cd $KEEPKEY_FIRMWARE
 
-IMAGETAG=kkfirmware:v16_pidev
+IMAGETAG=kkfirmware:v16
 
 docker run -t \
   -v $(pwd):/root/keepkey-firmware:z \

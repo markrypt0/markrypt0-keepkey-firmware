@@ -1,1 +1,0 @@
-docker build -f pidev.Dockerfile -t kkfirmware:v16_pidev .
