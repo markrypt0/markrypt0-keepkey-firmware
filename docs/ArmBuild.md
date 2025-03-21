@@ -22,10 +22,10 @@ $ git submodule update --init --recursive
 
 Build the docker container from keepkey-firmware root directory
 ```sh
-$ ./pidevDockerStart
+$ ./armDockerStart
 ```
 
 Build firmware
 ```sh
-$ ./scripts/build/docker/device/armdebug.sh
+$ ./scripts/build/docker/device/debug.sh
 ```
