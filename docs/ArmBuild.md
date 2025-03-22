@@ -29,3 +29,23 @@ Build firmware
 ```sh
 $ ./scripts/build/docker/device/debug.sh
 ```
+
+## Using Keepkey on Raspberry Pi
+
+You'll need to install UDEV rules in order to allow non-root users to communicate with the device. The rules for a Raspberry Pi are slightly different than what is described for linux in Host.md
+
+Add the following udev rules to `/etc/udev/rules.d/51-usb-keepkey.rules`:
+
+```
+# KeepKey: Your Private Bitcoin Vault
+# http://www.keepkey.com/
+# Put this file into /etc/udev/rules.d/ on a Raspberry Pi
+
+# KeepKey HID Firmware/Bootloader
+SUBSYSTEM=="usb", ATTR{idVendor}=="2b24", ATTR{idProduct}=="0001", MODE="0666", GROUP="plugdev", TAG+="uaccess", TAG+="udev-acl", SYMLINK+="keepkey%n"
+KERNEL=="hiddev*", ATTRS{idVendor}=="2b24", ATTRS{idProduct}=="0001",  MODE="0666", GROUP="plugdev", TAG+="uaccess", TAG+="udev-acl"
+
+# KeepKey WebUSB Firmware/Bootloader
+SUBSYSTEM=="usb", ATTR{idVendor}=="2b24", ATTR{idProduct}=="0002", MODE="0666", GROUP="plugdev", TAG+="uaccess", TAG+="udev-acl", SYMLINK+="keepkey%n"
+KERNEL=="hiddev*", ATTRS{idVendor}=="2b24", ATTRS{idProduct}=="0002",  MODE="0666", GROUP="plugdev", TAG+="uaccess", TAG+="udev-acl"
+```
