@@ -20,13 +20,19 @@ The build is done via a docker environment, thus Docker is a reqirement.
 
 You must build a local docker image since currently there is no keepkey build image in the docker repo.
 
-Build the image in your dev environment from a shell command line:
+Build the image in your dev environment from a shell command line.
+
+For amd64 architecture build environment:
 
 ```
 $ ./DockerStart.sh
 ```
 
-The Dockerfile will detect the local architecture and build the proper image.
+For arm64v8 architecture build environment:
+
+```
+$ ./armDockerStart.sh
+```
 
 ### Build
 
