@@ -7,7 +7,7 @@ set(CMAKE_CROSSCOMPILING 1)
 include(CMakeForceCompiler)
 
 # The sysroot. Just assume the one installed in the docker image for now
-set(CMAKE_SYSROOT /usr/local/arm-none-eabi CACHE PATH "")
+set(CMAKE_SYSROOT /usr/arm-none-eabi CACHE PATH "")
 
 set(CMAKE_C_COMPILER arm-none-eabi-gcc CACHE FILEPATH "")
 set(CMAKE_CXX_COMPILER arm-none-eabi-g++ CACHE FILEPATH "")
