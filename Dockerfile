@@ -32,8 +32,8 @@ RUN pip install --break-system-packages --root-user-action ignore mnemonic
 WORKDIR /root
 
 # FOR ARM BUILD
-# Install gcc-arm-none-eabi version 12.2.1 for raspi running bookworm and protobuf-compiler
-# This is a kludge that patches the system library so that useless system call warnings 
+# the lines similar to "arm-none-eabi-objcopy -w -R .gnu.warning.* libnosys.a"
+# are a kludge that patches the system library so that useless system call warnings 
 # aren't generated, e.g., 
 #              warning: _close is not implemented and will always fail 
 # during link. The warnings are harmless but there is no way to turn them off with a flag. 
@@ -42,14 +42,10 @@ WORKDIR /root
 # see https://stackoverflow.com/questions/73742774/gcc-arm-none-eabi-11-3-is-not-implemented-and-will-always-fail 
 RUN if [[ "$ARCH" == "arm64v8" ]]; \
   then \
-    wget https://developer.arm.com/-/media/Files/downloads/gnu/12.2.rel1/binrel/arm-gnu-toolchain-12.2.rel1-aarch64-arm-none-eabi.tar.xz && \
-    tar -xvf arm-gnu-toolchain-12.2.rel1-aarch64-arm-none-eabi.tar.xz && \
-    cp -r arm-gnu-toolchain-12.2.rel1-aarch64-arm-none-eabi/* /usr/local && \
-    rm  arm-gnu-toolchain-12.2.rel1-aarch64-arm-none-eabi.tar.xz && \
-    rm -rf arm-gnu-toolchain-12.2.rel1-aarch64-arm-none-eabi && \
-    cd /usr/local/arm-none-eabi/lib/thumb/v7e-m/nofp && \
+    apk add gcc-arm-none-eabi g++-arm-none-eabi newlib-arm-none-eabi && \
+    cd /usr/arm-none-eabi/lib/thumb/v7e-m/nofp && \
     arm-none-eabi-objcopy -w -R .gnu.warning.* libnosys.a && \
-    cd /usr/local/arm-none-eabi/lib/thumb/v7-m/nofp && \
+    cd /usr/arm-none-eabi/lib/thumb/v7-m/nofp && \
     arm-none-eabi-objcopy -w -R .gnu.warning.* libnosys.a && \
     cd /root && \
     mkdir protoc3 && \
@@ -77,17 +73,6 @@ RUN if [[ "$ARCH" == "amd64" ]]; \
     mv protoc3/include/* /usr/local/include && \
     rm -rf protoc3; \
   fi
-
-# # Install protobuf-compiler
-# WORKDIR /root
-# RUN mkdir protoc3
-# RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v3.19.4/protoc-3.19.4-linux-aarch_64.zip
-# RUN unzip protoc-3.19.4-linux-aarch_64 -d protoc3
-# RUN mv protoc3/bin/* /usr/local/bin
-# RUN mv protoc3/include/* /usr/local/include
-# RUN rm -rf protoc3
-# RUN rm protoc-3.19.4-linux-aarch_64.zip
-
 
 # Install protobuf/python3 support
 WORKDIR /root
