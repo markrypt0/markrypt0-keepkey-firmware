@@ -27,7 +27,8 @@ set(sources
 
 if("${DEVDEBUG}" STREQUAL "true")
   set(sources ${sources}
-    keepkey_spidisplay.c)
+    keepkey_spidisplay.c
+    spiFlash/stp32.c)
     if("${TWODISP}" STREQUAL "true")
       set(sources ${sources}
       ssd1351/ssd1351.c

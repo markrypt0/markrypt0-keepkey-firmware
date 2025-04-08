@@ -60,6 +60,7 @@
 
 #ifdef DEV_DEBUG
 #include "keepkey/board/pin.h"
+#include "keepkey/board/spiFlash/stp32.h"
 #endif
 
 #ifdef TWO_DISP
@@ -336,11 +337,42 @@ int main(void) {
 
   layout_simple_message("booting...");
 
+
+#ifdef DEV_DEBUG
 #ifdef TWO_DISP
   SSD1351_Init();
-  SSD1351_FillScreen(SSD1351_BLACK);
-  SSD1351_WriteString(0, 0, "bootloader", Font_7x10, SSD1351_BLUE, SSD1351_BLACK);
+  SSD1351_ClearScreen();
+  SSD1351_WriteString(-1, -1, "bootloader\n", Font_7x10, SSD1351_BLUE, SSD1351_BLACK);
 #endif
+  spif_init_device();
+
+  // spi flash sample code
+  // {
+  // #define TESTSIZE 550
+  //   uint16_t ctr;
+  //   uint8_t data[TESTSIZE];
+  //   uint8_t status[2];
+
+  //   for (ctr=0;ctr<sizeof(data);ctr++) {
+  //     data[ctr] = (sizeof(data)-ctr) % 256;
+  //   }
+  //   spif_write_data(0x17, data, sizeof(data));
+
+  //   spif_waitReady(status);
+  //   memzero(data, sizeof(data));
+
+  //   spif_read_data(0x00, data, sizeof(data));
+
+  //   spif_chipErase();
+  //   // spif_sector_command(SPIF_SECT_ERASE_4KB, 0);
+  //   spif_waitReady(status);
+
+  //   spif_read_data(0x00, data, sizeof(data));
+
+  //   while(1);
+  // }
+
+#endif // DEV_DEBUG
 
 #if !defined(DEBUG_ON) && (MEMORY_PROTECT == 0)
 #error "To compile release version, please set MEMORY_PROTECT flag"
