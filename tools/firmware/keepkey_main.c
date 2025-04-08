@@ -189,7 +189,10 @@ int main(void) {
     kk_board_init();
 
 #ifdef TWO_DISP
-    SSD1351_WriteString(0, 12, "firmware", Font_7x10, SSD1351_GREEN, SSD1351_BLACK);
+
+    SSD1351_ClearScreen();
+    SSD1351_WriteString(-1, -1, "firmware", Font_7x10, SSD1351_GREEN, SSD1351_BLACK);
+
 #endif
 
     /* Program the model into OTP, if we're not in screen-test mode, and it's

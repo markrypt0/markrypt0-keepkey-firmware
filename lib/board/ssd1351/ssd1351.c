@@ -19,17 +19,6 @@ void SSD1351_Unselect(void) {
   SET_PIN(SSD1351_CS_Pin);
 }
 
-
-// All displays are reset with the same pin at the same time in display_reset(void)
-// static void SSD1351_Reset(void) {
-//   SET_PIN(SSD1351_RES_Pin);
-//   delay_ms(1);
-//   CLEAR_PIN(SSD1351_RES_Pin);
-//   delay_ms(1);
-//   SET_PIN(SSD1351_RES_Pin);
-//   delay_ms(1);
-// }
-
 static void SSD1351_WriteCommand(uint8_t cmd) {
 #ifndef EMULATOR
 
@@ -100,12 +89,6 @@ void SSD1351_Init() {
         SSD1351_WriteData(data, sizeof(data));
     }
     SSD1351_WriteCommand(0xAE); // DISPLAYOFF
-
-    // SSD1351_WriteCommand(0xB2); // DISPLAY ENHANCEMENT
-    // {
-    //   uint8_t data[] = { 0XA4, 0X00, 0X00 }; // 127
-    //   SSD1351_WriteData(data, sizeof(data));  
-    // }
 
     SSD1351_WriteCommand(0xB3); // CLOCKDIV
     {
@@ -186,6 +169,8 @@ void SSD1351_Init() {
 
     SSD1351_WriteCommand(0xAF); // DISPLAYON
     SSD1351_Unselect();
+
+    SSD1351_ClearScreen();
 }
 
 void SSD1351_DrawPixel(uint16_t x, uint16_t y, uint16_t color) {
@@ -217,29 +202,63 @@ static void SSD1351_WriteChar(uint16_t x, uint16_t y, char ch, FontDef font, uin
     }
 }
 
-void SSD1351_WriteString(uint16_t x, uint16_t y, const char* str, FontDef font, uint16_t color, uint16_t bgcolor) {
+static uint16_t curXpos=0, curYpos=0;
+
+void SSD1351_ClearScreen(void) {
+  SSD1351_FillScreen(SSD1351_BLACK);
+  curXpos=0, curYpos=0;
+}
+
+void SSD1351_WriteString(int16_t xinit, int16_t yinit, const char* str, FontDef font, uint16_t color, uint16_t bgcolor) {
+
+  uint16_t x;
+  uint16_t y;
+
+  if (xinit == -1) {
+    // use curXpos
+    x = curXpos;
+  } else {
+    x = xinit;
+  }
+  if (yinit == -1) {
+    // use curYpos
+    y = curYpos;
+  } else {
+    y = yinit;
+  }
+
   SSD1351_Select();
 
     while(*str) {
         if(x + font.width >= SSD1351_WIDTH) {
-            x = 0;
-            y += font.height;
-            if(y + font.height >= SSD1351_HEIGHT) {
-                break;
-            }
-
-            if(*str == ' ') {
-                // skip spaces in the beginning of the new line
-                str++;
-                continue;
-            }
+          x = 0;
+          y += font.height;
+          if(y + font.height >= SSD1351_HEIGHT) {
+              break;
+          }
+          if(*str == ' ') {
+              // skip spaces in the beginning of the new line
+              str++;
+              continue;
+          }
         }
 
-        SSD1351_WriteChar(x, y, *str, font, color, bgcolor);
-        x += font.width;
-        str++;
+        if (*str == '\n') {
+          x = 0;
+          y += font.height;
+          if(y + font.height >= SSD1351_HEIGHT) {
+              break;
+          }
+          str++;
+        } else {
+          SSD1351_WriteChar(x, y, *str, font, color, bgcolor);
+          x += font.width;
+          str++;
+        }
     }
     SSD1351_Unselect();
+    curXpos = x;
+    curYpos = y;
 }
 
 void SSD1351_FillRectangle(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color) {
