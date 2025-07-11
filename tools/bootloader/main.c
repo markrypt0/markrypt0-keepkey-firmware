@@ -175,7 +175,7 @@ void capture_reset_param(void) {
   _param_3 = 0;
 }
 
-void display_configure_io(void);
+// void display_configure_io(void);
 
 /// Bootloader Board Initialization
 static void bootloader_init(void) {

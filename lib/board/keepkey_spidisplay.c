@@ -157,7 +157,7 @@ static void display_reset_io(void) {
  *     none
  */
 // static void display_configure_io(void) {
-void display_configure_io(void) {
+void dev_display_configure_io(void) {
 #ifndef EMULATOR
   spi_setup();
   /* Set up port C  OLED_RST=PC3, DC=PC2, CS=C1*/
@@ -330,7 +330,7 @@ void display_constant_power(bool enabled)
  */
 void display_hw_init(void) {
 #ifndef EMULATOR
-  display_configure_io();
+  dev_display_configure_io();
   display_reset();
   
   display_write_reg((uint8_t)0xFD);
@@ -428,9 +428,6 @@ void display_hw_init(void) {
   for (i = 0; i < end; i += 2) {
     display_write_ram((uint8_t)0x00);
   }
-
-  /* Turn on 12V */
-  // SET_PIN(BACKLIGHT_PWR_PIN);
 
   delay_ms(100);
 
