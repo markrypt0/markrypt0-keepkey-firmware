@@ -51,20 +51,29 @@ typedef struct {
   uint16_t pin;
 } Pin;
 
+
+
+
 #ifndef EMULATOR
 
+#ifdef DEV_DEBUG  
+// debug board
 static const Pin nDC_PIN = {GPIOC, GPIO2};
 static const Pin nSEL_PIN = {GPIOC, GPIO5};
 static const Pin nRESET_PIN = {GPIOC, GPIO3};
 
-#ifndef DEV_DEBUG
-// display signals for standard keepkey
+#else     
+// keepkey device
+static const Pin nDC_PIN = {GPIOB, GPIO1};
+static const Pin nSEL_PIN = {GPIOA, GPIO10};
+static const Pin nRESET_PIN = {GPIOB, GPIO5};
+
 static const Pin nOE_PIN = {GPIOA, GPIO8};
 static const Pin nWE_PIN = {GPIOA, GPIO9};
-static const Pin BACKLIGHT_PWR_PIN = {GPIOB, GPIO0};
-#endif
-#endif  // EMULATOR
 
+static const Pin BACKLIGHT_PWR_PIN = {GPIOB, GPIO0};
+#endif  // DEV_DEBUG
+#endif  // EMULATOR
 
 #ifdef DEV_DEBUG
 static const Pin SCOPE_PIN = {GPIOC, GPIO7};
